@@ -7,7 +7,7 @@
 
 FROM node:14.17.0-alpine3.13
 LABEL org.opencontainers.image.authors="Agile Digital <info@agiledigital.com.au>"
-LABEL Description=" Docker image with tools and scripts installed to support the running of a Node 0.12 web app" Vendor="Agile Digital" Version="0.1"
+LABEL Description=" Docker image with tools and scripts installed to support the running of a Node 0.14 web app" Vendor="Agile Digital" Version="0.1"
 
 ENV HOME /home/runner
 WORKDIR /home/runner
