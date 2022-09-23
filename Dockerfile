@@ -12,7 +12,8 @@ LABEL Description=" Docker image with tools and scripts installed to support the
 ENV HOME /home/runner
 WORKDIR /home/runner
 
-RUN apk add --update --no-cache git bash openjdk11-jre curl
+# expat update should be removed when upstream fix is in alpine node
+RUN apk add --update --no-cache git bash openjdk11-jre curl expat
 RUN addgroup -S -g 10000 runner
 RUN adduser -S -u 10000 -h $HOME -G runner runner
 
