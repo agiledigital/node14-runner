@@ -5,15 +5,14 @@
 # Expects build artifacts mounted at /home/runner/artifacts
 #
 
-FROM node:14.20.0-alpine3.16
+FROM node:14.21.1-alpine3.16
 LABEL org.opencontainers.image.authors="Agile Digital <info@agiledigital.com.au>"
 LABEL Description=" Docker image with tools and scripts installed to support the running of a Node 0.14 web app" Vendor="Agile Digital" Version="0.1"
 
 ENV HOME /home/runner
 WORKDIR /home/runner
 
-# expat update should be removed when upstream fix is in alpine node
-RUN apk add --update --no-cache git bash openjdk11-jre curl expat
+RUN apk add --update --no-cache git bash openjdk11-jre curl
 RUN addgroup -S -g 10000 runner
 RUN adduser -S -u 10000 -h $HOME -G runner runner
 
