@@ -1,0 +1,45 @@
+name: Docker Image scan and rebuild
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Scan the latest image
+      run: |
+        mkdir -p ~/.docker/cli-plugins && \
+        curl https://github.com/docker/scan-cli-plugin/releases/latest/download/docker-scan_linux_amd64 -L -s -S -o ~/.docker/cli-plugins/docker-scan &&\
+        chmod +x ~/.docker/cli-plugins/docker-scan
+        docker scan --accept-license --severity=high agiledigital/node14-runner:latest
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      if: failure()
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-    
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        builder: ${{ steps.buildx.outputs.name }}
+        push: true
+        tags: agiledigital/node14-runner:$(date +%s)
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
+        platforms: linux/amd64
